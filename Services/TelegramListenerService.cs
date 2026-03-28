@@ -72,7 +72,7 @@ public class TelegramListenerService : BackgroundService
         var usuario = await dbContext.UsuariosConfig.FindAsync(new object[] { chatId }, cancellationToken);
         if (usuario == null)
         {
-            usuario = new UsuarioConfig { ChatId = chatId, AreaAtiva = "todos", NivelAtivo = "iniciantes" };
+            usuario = new UsuarioConfig { ChatId = chatId, AreaAtiva = "todos", NivelAtivo = "iniciantes", LocalizacaoAtiva = "todas" };
             dbContext.UsuariosConfig.Add(usuario);
             await dbContext.SaveChangesAsync(cancellationToken);
         }
@@ -89,7 +89,7 @@ public class TelegramListenerService : BackgroundService
             {
                 usuario.AreaAtiva = area;
                 enviouComandoValido = true;
-                await botClient.SendMessage(chatId, $"✅ Área atualizada para: *{area.ToUpper()}*", parseMode: ParseMode.Markdown, cancellationToken: cancellationToken);
+                await botClient.SendMessage(chatId, $"Área atualizada para: *{area.ToUpper()}*", parseMode: ParseMode.Markdown, cancellationToken: cancellationToken);
             }
         }
         // Processa comando nível
@@ -101,25 +101,39 @@ public class TelegramListenerService : BackgroundService
             {
                 usuario.NivelAtivo = nivel;
                 enviouComandoValido = true;
-                await botClient.SendMessage(chatId, $"✅ Nível atualizado para: *{nivel.ToUpper()}*", parseMode: ParseMode.Markdown, cancellationToken: cancellationToken);
+                await botClient.SendMessage(chatId, $"Nível atualizado para: *{nivel.ToUpper()}*", parseMode: ParseMode.Markdown, cancellationToken: cancellationToken);
+            }
+        }
+        // Processa comando localização
+        else if (comandoLower.StartsWith("/loc_"))
+        {
+            string loc = comandoLower.Replace("/loc_", "");
+            if (FiltrosVaga.SinonimosLocalizacao.ContainsKey(loc) || loc == "todas")
+            {
+                usuario.LocalizacaoAtiva = loc;
+                enviouComandoValido = true;
+                await botClient.SendMessage(chatId, $"Localização atualizada para: *{loc.ToUpper()}*", parseMode: ParseMode.Markdown, cancellationToken: cancellationToken);
             }
         }
 
         if (comandoLower == "/start" || !enviouComandoValido)
         {
-            var msgMenu = $@"🤖 Olá! Sou seu Caçador de Vagas Tech.
+            var msgMenu = $@"Olá! Sou seu Caçador de Vagas Tech.
 
-                ⚙️ *Configuração Atual:*
-                Área: *{usuario.AreaAtiva.ToUpper()}* | Nível: *{usuario.NivelAtivo.ToUpper()}*
+                *Configuração Atual:*
+                Área: *{usuario.AreaAtiva.ToUpper()}* | Nível: *{usuario.NivelAtivo.ToUpper()}* | Localização: *{usuario.LocalizacaoAtiva.ToUpper()}*
 
-                👇 *MUDAR ÁREA:*
+                *MUDAR ÁREA:*
                 /area_todos | /area_backend | /area_frontend | /area_dados | /area_qa | /area_mobile
 
-                👇 *MUDAR NÍVEL:*
+                *MUDAR NÍVEL:*
                 /nivel_todos (Traz TUDO)
                 /nivel_iniciantes (Estágio \+ Jr \+ Trainee)
-                /nivel_pleno (Bônus)
-                /nivel_senior (Bônus)";
+                /nivel_pleno 
+                /nivel_senior 
+                
+                *MUDAR LOCALIZAÇÃO:*
+                /loc_todas | /loc_remoto | /loc_presencial";
 
             await botClient.SendMessage(
                 chatId: chatId,
@@ -140,7 +154,7 @@ public class TelegramListenerService : BackgroundService
 
     private async Task EnviarAmostrasDoBancoAsync(string chatId, UsuarioConfig usuario, AppDbContext dbContext, TelegramService telegramService, CancellationToken cancellationToken)
     {
-        await _botClient.SendMessage(chatId, "🔍 *Buscando Vagas Recentes com o seu novo filtro...*", parseMode: ParseMode.Markdown, cancellationToken: cancellationToken);
+        await _botClient.SendMessage(chatId, "*Buscando Vagas Recentes com o seu novo filtro...*", parseMode: ParseMode.Markdown, cancellationToken: cancellationToken);
 
         // Busca as 50 últimas para não puxar muito da memória
         var ultimasVagas = await dbContext.Vagas

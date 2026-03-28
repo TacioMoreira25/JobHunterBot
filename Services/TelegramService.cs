@@ -34,8 +34,8 @@ public class TelegramService
                                vaga.Descricao.Contains(".NET", StringComparison.OrdinalIgnoreCase);
 
             var textoDestaque = isSuperMatch 
-                ? "🔥 *DESTAQUE SUPER MATCH \\- C\\# / \\.NET* 🔥\n" 
-                : "*Nova Vaga Encontrada\\!*\n";
+                ? "*Vaga em Destaque \\- C\\# / \\.NET*\n" 
+                : "*Nova Vaga*\n";
 
             var text = $$"""
             {{textoDestaque}}*Fonte:* {{EscapeMarkdownV2(vaga.Fonte)}}

@@ -33,6 +33,12 @@ public static class FiltrosVaga
         { "mobile", new List<string> { "mobile", "flutter", "dart", "android", "ios", "kotlin", "swift", "react native" } }
     };
 
+    public static readonly Dictionary<string, List<string>> SinonimosLocalizacao = new(StringComparer.OrdinalIgnoreCase)
+    {
+        { "remoto", new List<string> { "remoto", "remote", "home office" } },
+        { "presencial", new List<string> { "presencial", "on-site", "hibrido", "híbrido" } }
+    };
+
     public static bool ContemPalavrasProibidas(string texto)
     {
         if (string.IsNullOrWhiteSpace(texto)) return false;
@@ -83,13 +89,28 @@ public static class FiltrosVaga
         return true; // Se a área não estiver mapeada, assume que atende pra não perder a vaga
     }
 
+    public static bool AtendeFiltroLocalizacao(string titulo, string descricao, string locAtiva)
+    {
+        if (locAtiva.Equals("todas", StringComparison.OrdinalIgnoreCase)) return true;
+        
+        var textoCompleto = $"{titulo} {descricao}".ToLowerInvariant();
+
+        if (SinonimosLocalizacao.TryGetValue(locAtiva.ToLowerInvariant(), out var sinonimos))
+        {
+             return sinonimos.Any(s => textoCompleto.Contains(s));
+        }
+        
+        return true;
+    }
+
     public static bool VagaValidaParaUsuario(Vaga vaga, UsuarioConfig usuario)
     {
         if (ContemPalavrasProibidas(vaga.Titulo)) return false;
 
         bool atendeNivel = AtendeFiltroNivel(vaga.Titulo, usuario.NivelAtivo);
         bool atendeArea = AtendeFiltroArea(vaga.Titulo, usuario.AreaAtiva);
+        bool atendeLocalizacao = AtendeFiltroLocalizacao(vaga.Titulo, vaga.Descricao, usuario.LocalizacaoAtiva);
 
-        return atendeNivel && atendeArea;
+        return atendeNivel && atendeArea && atendeLocalizacao;
     }
 }

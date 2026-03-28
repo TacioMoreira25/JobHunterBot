@@ -10,4 +10,6 @@ public class UsuarioConfig
     public string AreaAtiva { get; set; } = "todos";
     
     public string NivelAtivo { get; set; } = "iniciantes";
+    
+    public string LocalizacaoAtiva { get; set; } = "todas";
 }
