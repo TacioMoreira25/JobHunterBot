@@ -9,8 +9,7 @@ public class TelegramService
 {
     private readonly ITelegramBotClient _botClient;
     private readonly ILogger<TelegramService> _logger;
-    private readonly string? _chatId;
-
+    
     public TelegramService(IConfiguration configuration, ILogger<TelegramService> logger)
     {
         _logger = logger;
