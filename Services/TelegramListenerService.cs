@@ -115,25 +115,57 @@ public class TelegramListenerService : BackgroundService
                 await botClient.SendMessage(chatId, $"Localização atualizada para: <b>{loc.ToUpper()}</b>", parseMode: ParseMode.Html, cancellationToken: cancellationToken);
             }
         }
+        else if (comandoLower == "/combo_back_jr_remoto")
+        {
+            usuario.AreaAtiva = "backend";
+            usuario.NivelAtivo = "iniciantes";
+            usuario.LocalizacaoAtiva = "remoto";
+            enviouComandoValido = true;
+            await botClient.SendMessage(chatId, "Configuração rápida aplicada: <b>Backend + Iniciantes + Remoto</b>", parseMode: ParseMode.Html, cancellationToken: cancellationToken);
+        }
+        else if (comandoLower == "/combo_front_jr_remoto")
+        {
+            usuario.AreaAtiva = "frontend";
+            usuario.NivelAtivo = "iniciantes";
+            usuario.LocalizacaoAtiva = "remoto";
+            enviouComandoValido = true;
+            await botClient.SendMessage(chatId, "Configuração rápida aplicada: <b>Frontend + Iniciantes + Remoto</b>", parseMode: ParseMode.Html, cancellationToken: cancellationToken);
+        }
+        else if (comandoLower == "/combo_fullstack_jr_remoto")
+        {
+            usuario.AreaAtiva = "fullstack";
+            usuario.NivelAtivo = "iniciantes";
+            usuario.LocalizacaoAtiva = "remoto";
+            enviouComandoValido = true;
+            await botClient.SendMessage(chatId, "Configuração rápida aplicada: <b>Fullstack + Iniciantes + Remoto</b>", parseMode: ParseMode.Html, cancellationToken: cancellationToken);
+        }
 
         if (comandoLower == "/start" || !enviouComandoValido)
         {
-            var msgMenu = $@"Olá! Sou seu Caçador de Vagas Tech.
+            var msgMenu = $@"<b>Menu do Caçador de Vagas Tech</b>
 
-                <b>Configuração Atual:</b>
-                Área: <b>{usuario.AreaAtiva.ToUpper()}</b> | Nível: <b>{usuario.NivelAtivo.ToUpper()}</b> | Localização: <b>{usuario.LocalizacaoAtiva.ToUpper()}</b>
+<b>Sua Configuração Atual:</b>
+Área: <b>{usuario.AreaAtiva.ToUpper()}</b>
+Nível: <b>{usuario.NivelAtivo.ToUpper()}</b>
+Localização: <b>{usuario.LocalizacaoAtiva.ToUpper()}</b>
 
-                <b>MUDAR ÁREA:</b>
-                /area_todos | /area_backend | /area_frontend | /area_dados | /area_qa | /area_mobile
+<b>CONFIGURAÇÕES RÁPIDAS (COMBOS):</b>
+/combo_back_jr_remoto (Backend + Iniciante + Remoto)
+/combo_front_jr_remoto (Frontend + Iniciante + Remoto)
+/combo_fullstack_jr_remoto (Fullstack + Iniciante + Remoto)
 
-                <b>MUDAR NÍVEL:</b>
-                /nivel_todos (Traz TUDO)
-                /nivel_iniciantes (Estágio + Jr + Trainee)
-                /nivel_pleno 
-                /nivel_senior 
-                
-                <b>MUDAR LOCALIZAÇÃO:</b>
-                /loc_todas | /loc_remoto | /loc_presencial";
+<b>PERSONALIZAR ÁREA:</b>
+/area_todos | /area_backend | /area_frontend
+/area_fullstack | /area_dados | /area_qa
+
+<b>PERSONALIZAR NÍVEL:</b>
+/nivel_todos (Traz tudo)
+/nivel_iniciantes (Estágio, Jr, Trainee)
+/nivel_pleno (Pleno e Mid-level)
+/nivel_senior (Sênior)
+
+<b>PERSONALIZAR LOCALIZAÇÃO:</b>
+/loc_todas | /loc_remoto | /loc_presencial";
 
             await botClient.SendMessage(
                 chatId: chatId,

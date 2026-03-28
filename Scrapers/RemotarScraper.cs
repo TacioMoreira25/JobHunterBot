@@ -23,7 +23,7 @@ public class RemotarScraper : IVagaScraper
     public async Task<List<Vaga>> BuscarVagasAsync(CancellationToken cancellationToken = default)
     {
         var vagas = new List<Vaga>();
-        var termosDeBusca = new[] { "Estágio", "Junior", "Trainee", "Pleno", "Sênior" };
+        var termosDeBusca = new[] { "Desenvolvedor", "Programador", "Engenheiro de Software", "Backend", "Frontend", "Fullstack", "Dados", "QA", "C#", ".NET", "Python", "Java" };
 
         foreach (var termo in termosDeBusca)
         {

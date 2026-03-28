@@ -12,7 +12,8 @@ public static class FiltrosVaga
         "odontologia", "psicologia", "nutrição", "farmácia", "medicina", "veterinária", 
         "atendimento", "recepcionista", "telemarketing", "call center", "caixa", "vendedor", 
         "logística", "motorista", "limpeza", "eletrotécnica", "jornalismo", "social media", 
-        "coordenador", "gerente", "diretor", "tech lead"
+        "coordenador", "gerente", "diretor", "tech lead", "têxtil", "alimentos", "industrial", 
+        "indústria", "advogado", "fábrica", "farmacêutico", "contabilidade", "operador"
     };
 
     public static readonly Dictionary<string, List<string>> SinonimosNivel = new(StringComparer.OrdinalIgnoreCase)
@@ -28,6 +29,7 @@ public static class FiltrosVaga
     {
         { "backend", new List<string> { "backend", "back-end", "back end", "c#", ".net", "java", "python", "php", "node", "golang", "ruby" } },
         { "frontend", new List<string> { "frontend", "front-end", "front end", "react", "angular", "vue", "javascript", "typescript", "html", "css" } },
+        { "fullstack", new List<string> { "fullstack", "full-stack", "full stack" } },
         { "dados", new List<string> { "dados", "data", "engenharia de dados", "ciência de dados", "análise de dados", "machine learning", "ia", "sql", "python", "bi" } },
         { "qa", new List<string> { "qa", "quality assurance", "teste", "tester", "automação", "software engineer in test" } },
         { "mobile", new List<string> { "mobile", "flutter", "dart", "android", "ios", "kotlin", "swift", "react native" } }

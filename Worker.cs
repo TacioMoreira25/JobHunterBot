@@ -43,11 +43,12 @@ public class Worker(ILogger<Worker> logger, IServiceProvider serviceProvider) : 
                     .Select(v => v.Url)
                     .ToListAsync(stoppingToken);
 
-                // 1. Remove duplicatas da varredura atual
+                // 1. Remove duplicatas da varredura atual (agrupando por Titulo e Empresa minúsculos)
                 // 2. Remove o que já tá no banco
                 // 3. Remove "Lixos" absolutos mapeados (Pedagogia, Rh, etc)
                 var vagasIneditasLimpas = todasVagasBrutas
-                    .DistinctBy(x => x.Url) 
+                    .GroupBy(x => new { Titulo = x.Titulo.ToLower(), Empresa = x.Empresa.ToLower() })
+                    .Select(g => g.First())
                     .Where(v => !urlsNoBanco.Contains(v.Url))
                     .Where(v => !FiltrosVaga.ContemPalavrasProibidas(v.Titulo))
                     .ToList();
