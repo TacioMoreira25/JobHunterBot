@@ -89,7 +89,7 @@ public class TelegramListenerService : BackgroundService
             {
                 usuario.AreaAtiva = area;
                 enviouComandoValido = true;
-                await botClient.SendMessage(chatId, $"Área atualizada para: *{area.ToUpper()}*", parseMode: ParseMode.Markdown, cancellationToken: cancellationToken);
+                await botClient.SendMessage(chatId, $"Área atualizada para: <b>{area.ToUpper()}</b>", parseMode: ParseMode.Html, cancellationToken: cancellationToken);
             }
         }
         // Processa comando nível
@@ -101,7 +101,7 @@ public class TelegramListenerService : BackgroundService
             {
                 usuario.NivelAtivo = nivel;
                 enviouComandoValido = true;
-                await botClient.SendMessage(chatId, $"Nível atualizado para: *{nivel.ToUpper()}*", parseMode: ParseMode.Markdown, cancellationToken: cancellationToken);
+                await botClient.SendMessage(chatId, $"Nível atualizado para: <b>{nivel.ToUpper()}</b>", parseMode: ParseMode.Html, cancellationToken: cancellationToken);
             }
         }
         // Processa comando localização
@@ -112,7 +112,7 @@ public class TelegramListenerService : BackgroundService
             {
                 usuario.LocalizacaoAtiva = loc;
                 enviouComandoValido = true;
-                await botClient.SendMessage(chatId, $"Localização atualizada para: *{loc.ToUpper()}*", parseMode: ParseMode.Markdown, cancellationToken: cancellationToken);
+                await botClient.SendMessage(chatId, $"Localização atualizada para: <b>{loc.ToUpper()}</b>", parseMode: ParseMode.Html, cancellationToken: cancellationToken);
             }
         }
 
@@ -120,25 +120,25 @@ public class TelegramListenerService : BackgroundService
         {
             var msgMenu = $@"Olá! Sou seu Caçador de Vagas Tech.
 
-                *Configuração Atual:*
-                Área: *{usuario.AreaAtiva.ToUpper()}* | Nível: *{usuario.NivelAtivo.ToUpper()}* | Localização: *{usuario.LocalizacaoAtiva.ToUpper()}*
+                <b>Configuração Atual:</b>
+                Área: <b>{usuario.AreaAtiva.ToUpper()}</b> | Nível: <b>{usuario.NivelAtivo.ToUpper()}</b> | Localização: <b>{usuario.LocalizacaoAtiva.ToUpper()}</b>
 
-                *MUDAR ÁREA:*
+                <b>MUDAR ÁREA:</b>
                 /area_todos | /area_backend | /area_frontend | /area_dados | /area_qa | /area_mobile
 
-                *MUDAR NÍVEL:*
+                <b>MUDAR NÍVEL:</b>
                 /nivel_todos (Traz TUDO)
-                /nivel_iniciantes (Estágio \+ Jr \+ Trainee)
+                /nivel_iniciantes (Estágio + Jr + Trainee)
                 /nivel_pleno 
                 /nivel_senior 
                 
-                *MUDAR LOCALIZAÇÃO:*
+                <b>MUDAR LOCALIZAÇÃO:</b>
                 /loc_todas | /loc_remoto | /loc_presencial";
 
             await botClient.SendMessage(
                 chatId: chatId,
                 text: msgMenu,
-                parseMode: ParseMode.Markdown,
+                parseMode: ParseMode.Html,
                 cancellationToken: cancellationToken
             );
         }
@@ -154,7 +154,7 @@ public class TelegramListenerService : BackgroundService
 
     private async Task EnviarAmostrasDoBancoAsync(string chatId, UsuarioConfig usuario, AppDbContext dbContext, TelegramService telegramService, CancellationToken cancellationToken)
     {
-        await _botClient.SendMessage(chatId, "*Buscando Vagas Recentes com o seu novo filtro...*", parseMode: ParseMode.Markdown, cancellationToken: cancellationToken);
+        await _botClient.SendMessage(chatId, "<b>Buscando Vagas Recentes com o seu novo filtro...</b>", parseMode: ParseMode.Html, cancellationToken: cancellationToken);
 
         // Busca as 50 últimas para não puxar muito da memória
         var ultimasVagas = await dbContext.Vagas

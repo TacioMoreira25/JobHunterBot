@@ -34,16 +34,16 @@ public class TelegramService
                                vaga.Descricao.Contains(".NET", StringComparison.OrdinalIgnoreCase);
 
             var textoDestaque = isSuperMatch 
-                ? "*Vaga em Destaque \\- C\\# / \\.NET*\n" 
-                : "*Nova Vaga*\n";
+                ? "<b>Vaga em Destaque - C# / .NET</b>\n" 
+                : "<b>Nova Vaga</b>\n";
 
             var text = $$"""
-            {{textoDestaque}}*Fonte:* {{EscapeMarkdownV2(vaga.Fonte)}}
-            *Título:* {{EscapeMarkdownV2(vaga.Titulo)}}
-            *Empresa:* {{EscapeMarkdownV2(vaga.Empresa)}}
-            *Data Pública:* {{EscapeMarkdownV2(vaga.DataPublicacao.ToString("dd/MM/yyyy HH:mm"))}}
+            {{textoDestaque}}<b>Fonte:</b> {{EscapeHtml(vaga.Fonte)}}
+            <b>Título:</b> {{EscapeHtml(vaga.Titulo)}}
+            <b>Empresa:</b> {{EscapeHtml(vaga.Empresa)}}
+            <b>Data Pública:</b> {{EscapeHtml(vaga.DataPublicacao.ToString("dd/MM/yyyy HH:mm"))}}
 
-            [Candidatar\-se]({{EscapeMarkdownV2(vaga.Url)}})
+            <a href="{{EscapeHtml(vaga.Url)}}">Candidatar-se</a>
             """;
 
             try
@@ -51,7 +51,7 @@ public class TelegramService
                 await _botClient.SendMessage(
                     chatId: chatId,
                     text: text,
-                    parseMode: Telegram.Bot.Types.Enums.ParseMode.MarkdownV2,
+                    parseMode: Telegram.Bot.Types.Enums.ParseMode.Html,
                     cancellationToken: cancellationToken
                 );
 
@@ -65,17 +65,12 @@ public class TelegramService
         }
     }
 
-    private string EscapeMarkdownV2(string input)
+    private string EscapeHtml(string input)
     {
         if (string.IsNullOrEmpty(input)) return string.Empty;
         
-        string[] reservedChars = { "_", "*", "[", "]", "(", ")", "~", "`", ">", "#", "+", "-", "=", "|", "{", "}", ".", "!" };
-        
-        foreach (var ch in reservedChars)
-        {
-            input = input.Replace(ch, $"\\{ch}");
-        }
-        
-        return input;
+        return input.Replace("&", "&amp;")
+                    .Replace("<", "&lt;")
+                    .Replace(">", "&gt;");
     }
 }
