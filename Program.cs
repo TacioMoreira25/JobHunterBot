@@ -33,6 +33,7 @@ builder.Services.AddHttpClient<IVagaScraper, LinkedInRapidApiScraper>()
     .AddStandardResilienceHandler();
 
 // Outros serviços
+builder.Services.AddSingleton<BotStateService>();
 builder.Services.AddSingleton<TelegramService>();
 builder.Services.AddHostedService<TelegramListenerService>();
 builder.Services.AddHostedService<Worker>();

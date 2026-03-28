@@ -7,7 +7,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace JobHunterBot;
 
-public class Worker(ILogger<Worker> logger, IServiceProvider serviceProvider) : BackgroundService
+public class Worker(ILogger<Worker> logger, IServiceProvider serviceProvider, BotStateService botState) : BackgroundService
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
@@ -19,6 +19,8 @@ public class Worker(ILogger<Worker> logger, IServiceProvider serviceProvider) : 
 
             try
             {
+                botState.UltimaVarredura = DateTime.Now;
+
                 using var scope = serviceProvider.CreateScope();
                 
                 var scrapers = scope.ServiceProvider.GetRequiredService<IEnumerable<IVagaScraper>>();
@@ -86,6 +88,7 @@ public class Worker(ILogger<Worker> logger, IServiceProvider serviceProvider) : 
                 logger.LogError(ex, "Erro no ciclo principal de Execução.");
             }
 
+            botState.ProximaVarredura = DateTime.Now.AddHours(4);
             // Aguarda 4 horas para o próximo loop
             await Task.Delay(TimeSpan.FromHours(4), stoppingToken);
         }

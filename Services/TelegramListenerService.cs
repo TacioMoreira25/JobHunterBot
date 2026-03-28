@@ -19,14 +19,17 @@ public class TelegramListenerService : BackgroundService
     private readonly ILogger<TelegramListenerService> _logger;
     private readonly IServiceProvider _serviceProvider;
     private readonly TelegramBotClient _botClient;
+    private readonly BotStateService _botState;
 
     public TelegramListenerService(
         ILogger<TelegramListenerService> logger, 
         IServiceProvider serviceProvider,
-        IConfiguration configuration)
+        IConfiguration configuration,
+        BotStateService botState)
     {
         _logger = logger;
         _serviceProvider = serviceProvider;
+        _botState = botState;
         
         var botToken = configuration["Telegram:BotToken"];
         if (string.IsNullOrEmpty(botToken))
@@ -138,6 +141,40 @@ public class TelegramListenerService : BackgroundService
             usuario.LocalizacaoAtiva = "remoto";
             enviouComandoValido = true;
             await botClient.SendMessage(chatId, "Configuração rápida aplicada: <b>Fullstack + Iniciantes + Remoto</b>", parseMode: ParseMode.Html, cancellationToken: cancellationToken);
+        }
+        else if (comandoLower == "/status")
+        {
+            var totalVagas = await dbContext.Vagas.CountAsync(cancellationToken);
+            
+            string tempoRestante = "Calculando...";
+            if (_botState.ProximaVarredura.HasValue)
+            {
+                var diff = _botState.ProximaVarredura.Value - DateTime.Now;
+                if (diff.TotalSeconds > 0)
+                {
+                    tempoRestante = $"{(int)diff.TotalHours}h {diff.Minutes}m";
+                }
+                else
+                {
+                    tempoRestante = "A executar varredura agora...";
+                }
+            }
+            
+            var msgStatus = $@"<b>Status do Caçador de Vagas</b>
+
+<b>Estado:</b> Online e Operacional
+<b>Total de Vagas Rastreadas:</b> {totalVagas}
+
+<b>Última Varredura:</b> {(_botState.UltimaVarredura.HasValue ? _botState.UltimaVarredura.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")}
+<b>Próxima Varredura em:</b> {tempoRestante}
+
+<b>Sua Configuração Atual:</b>
+Área: <b>{usuario.AreaAtiva.ToUpper()}</b>
+Nível: <b>{usuario.NivelAtivo.ToUpper()}</b>
+Localização: <b>{usuario.LocalizacaoAtiva.ToUpper()}</b>";
+
+            await botClient.SendMessage(chatId, msgStatus, parseMode: ParseMode.Html, cancellationToken: cancellationToken);
+            return;
         }
 
         if (comandoLower == "/start" || !enviouComandoValido)
