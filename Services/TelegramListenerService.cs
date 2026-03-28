@@ -149,7 +149,7 @@ public class TelegramListenerService : BackgroundService
             string tempoRestante = "Calculando...";
             if (_botState.ProximaVarredura.HasValue)
             {
-                var diff = _botState.ProximaVarredura.Value - DateTime.Now;
+                var diff = _botState.ProximaVarredura.Value - DateTime.UtcNow;
                 if (diff.TotalSeconds > 0)
                 {
                     tempoRestante = $"{(int)diff.TotalHours}h {diff.Minutes}m";
@@ -165,7 +165,7 @@ public class TelegramListenerService : BackgroundService
 <b>Estado:</b> Online e Operacional
 <b>Total de Vagas Rastreadas:</b> {totalVagas}
 
-<b>Última Varredura:</b> {(_botState.UltimaVarredura.HasValue ? _botState.UltimaVarredura.Value.ToString("dd/MM/yyyy HH:mm") : "N/A")}
+<b>Última Varredura:</b> {(_botState.UltimaVarredura.HasValue ? _botState.UltimaVarredura.Value.AddHours(-3).ToString("dd/MM/yyyy HH:mm") : "N/A")}
 <b>Próxima Varredura em:</b> {tempoRestante}
 
 <b>Sua Configuração Atual:</b>

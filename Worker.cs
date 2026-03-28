@@ -19,7 +19,7 @@ public class Worker(ILogger<Worker> logger, IServiceProvider serviceProvider, Bo
 
             try
             {
-                botState.UltimaVarredura = DateTime.Now;
+                botState.UltimaVarredura = DateTime.UtcNow;
 
                 using var scope = serviceProvider.CreateScope();
                 
@@ -88,7 +88,7 @@ public class Worker(ILogger<Worker> logger, IServiceProvider serviceProvider, Bo
                 logger.LogError(ex, "Erro no ciclo principal de Execução.");
             }
 
-            botState.ProximaVarredura = DateTime.Now.AddHours(4);
+            botState.ProximaVarredura = DateTime.UtcNow.AddHours(4);
             // Aguarda 4 horas para o próximo loop
             await Task.Delay(TimeSpan.FromHours(4), stoppingToken);
         }
